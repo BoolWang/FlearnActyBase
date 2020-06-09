@@ -18,17 +18,19 @@ from bin.globalNUM import *
 # print(len(idlist))
 # #由id和盘点好的用户活跃度表进行按日更新
 #at C3406949
-# idlist=get_idlist()
-# for uid in idlist[242:]:
-#     Me=UserActy(id=uid)
-#     Me.newsh()
-#     Me.cutsh()
-#     Me.get2mongo()
-#     #Me.tprint()
-#     sys.stdout.write('\r' + "at %s"%uid)
-#     sys.stdout.flush()
+idlist=get_idlist()
+for uid in idlist[242:]:
+    Me=UserActy(id=uid)
+    Me.newsh()
+    Me.cutsh()
+    Me.get2mongo()
+    #Me.tprint()
+    sys.stdout.write('\r' + "at %s"%uid)
+    sys.stdout.flush()
 # for i in range(len(idlist)):
-uid="A0100001"
-a=getclient()
-mycol=a[DBname][COLname]
-mycol.find_one({})
+# uid="A0100001"
+# a=getclient()
+# mycol=a[DBname][COLname]
+# rs=mycol.find_one({})
+# me=UserActy(uid)
+# print(me.check())

@@ -1,25 +1,39 @@
-import json
+from useracty.UserActy import *
+from sql.StudyH import select_all_id,sqlbyid
+from sql.mongo import get_actyh,getclient
+from bin.json_io import get_idlist
+import sys
 from bin.globalNUM import *
-from bin.json_io import list2json
-from sql.StudyH import sqlbyid_days
-import datetime
-
-# with open(ROOTpath+'\\idlist.json') as f:
-#     userli=json.load(f)
-#     f.close()
-# lis=userli["rows"]
-# lis1=[]
-# for li in lis:
-#     lis1.append(li[0])
-# list2json(lis1,ROOTpath+'\\idlist.json')
-# fday=datetime.datetime.strptime("2019-07-12","%Y-%m-%d")
-# lday=datetime.datetime.strptime("2020-06-12","%Y-%m-%d")
-# a=sqlbyid_days("F3235939",fday,lday)
-# print(a)
-# print(fday)
-# print(fday.strftime("%Y-%m-%d"))
-today=datetime.datetime.today()
-today=today+datetime.timedelta(days=1)
-print(today.strftime("%Y-%m-%d"))
-print(sqlbyid_days("A0100001",datetime.datetime.strptime("2018-03-12","%Y-%m-%d"),today))
-print(80*1024)
+#
+# #由id盘点未曾计算过的用户活跃度,并对计算结果进行存储
+# idlist=select_all_id()
+# for uid in idlist:
+#     Me=UserActy(id=uid)
+#     Me.newsh()
+#     Me.cutsh()
+#     Me.get2mongo()
+#     sys.stdout.write('\r' + "at %s"%uid)
+#     sys.stdout.flush()
+#
+# print(len(idlist))
+# #由id和盘点好的用户活跃度表进行按日更新
+#at C3406949
+idlist=get_idlist()
+l=len(idlist)
+sums=1
+for uid in idlist:
+    Me=UserActy(id=uid)
+    Me.newsh()
+    Me.cutsh()
+    Me.get2mongo()
+    #Me.tprint()
+    sys.stdout.write('\r' + "at %s,%s of s%"%(uid,sums,l))
+    sys.stdout.flush()
+    sums+=1
+# for i in range(len(idlist)):
+# uid="A0100001"
+# a=getclient()
+# mycol=a[DBname][COLname]
+# rs=mycol.find_one({})
+# me=UserActy(uid)
+# print(me.check())
