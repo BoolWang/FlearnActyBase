@@ -17,13 +17,17 @@ from bin.globalNUM import *
 # #
 # # print(len(idlist))
 # # #由id和盘点好的用户活跃度表进行按日更新
-# #at C3406949
+# #at G4184061 (81632 OF 246473)
+nowindex=82004
 idlist=get_idlist()
-for uid in idlist[242:]:
+l,sums=len(idlist),nowindex
+for uid in idlist[nowindex:]:
     Me=UserActy(id=uid)
     Me.newsh()
     Me.cutsh()
     Me.get2mongo()
     #Me.tprint()
-    sys.stdout.write('\r' + "at %s"%uid)
+    sys.stdout.write('\r' + "at %s (%s OF %s)"%(uid,sums,l))
     sys.stdout.flush()
+    sums+=1
+# print(idlist[81633])

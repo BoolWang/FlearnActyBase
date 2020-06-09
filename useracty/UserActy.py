@@ -108,6 +108,12 @@ class UserActy():
     def get2mongo(self):
         doc2mongo(self.get2doc())
 
+#一键刷新功能,逻辑上就是将当前用户的所有属性更新到最新，
+    # 包括数据库中的数据也会进行更新
+    def refresh(self):
+        checkli=self.check()
+
+
 
 
     #def updatabytoday(self):

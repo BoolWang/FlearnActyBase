@@ -5,6 +5,7 @@ import datetime
 import time
 from bin.globalNUM import *
 
+today=datetime.datetime.strftime(datetime.datetime.today()+datetime.timedelta(days=1),"%Y-%m-%d")
 def getclient():
     conn1=pymysql.connect(SQLhost,user=SQLuser,passwd=SQLpwd,
                        db=SQLdb,charset='utf8',port=SQLport)
@@ -18,7 +19,8 @@ def sqlbyid(id):
                        db=SQLdb,charset='utf8',port=SQLport)
     cur1=conn1.cursor()#游标
     #query1="select VideoStartTime, SpendSec from log_data_Course_see_2 where UserId=\"%s\" and SpendSec>60"%id
-    query1="select VideoStartTime, SpendSec from %s where UserId=\"%s\" and SpendSec>60"%(SQLtable,id)
+    query1="select VideoStartTime, SpendSec from %s where UserId=\"%s\" and SpendSec>60 and " \
+           "VideoStartTime<\"%s\" and VideoStartTime>\"2017-01-01\""%(SQLtable,id,today)
     cur1.execute(query1)
     alldata1=cur1.fetchall()
     all=pd.DataFrame(list(alldata1),columns=['VideoStartTime','SpendSec'])
@@ -36,7 +38,8 @@ def sqlbyid_days(id,fday,lday):
     fday=fday.strftime("%Y-%m-%d")
     lday=lday.strftime("%Y-%m-%d")
     cur1=getclient()
-    query1="select VideoStartTime, SpendSec from %s where UserId=\"%s\" and SpendSec>60 and VideoStartTime>\"%s\" and VideoStartTime<\"%s\""%(SQLtable,id,fday,lday)
+    query1="select VideoStartTime, SpendSec from %s where UserId=\"%s\" and SpendSec>60 and VideoStartTime>\"%s\" " \
+           "and VideoStartTime<\"%s\""%(SQLtable,id,fday,lday)
     cur1.execute(query1)
     alldata1=cur1.fetchall()
     all=pd.DataFrame(list(alldata1),columns=['VideoStartTime','SpendSec'])
