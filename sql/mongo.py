@@ -3,25 +3,25 @@ import pymongo as pmg
 from bin.globalNUM import *
 
 def getclient():
-    return pmg.MongoClient(host=MONGOhost,port=MONGOport,username=USERname,password=USERpwd,authSource="admin")
+    client=pmg.MongoClient("mongodb://"+MONGOhost+":"+str(MONGOport)+"/")
+    db=client[DBname]
+    db.authenticate(USERname,USERpwd)
+    return db[COLname]
 
 #存储文档到userActy
 def doc2mongo(doc):
-    myclient=getclient()
-    mycol=myclient[DBname][COLname]
+    mycol=getclient()
     mycol.insert_one(doc)
     return
 
 #按照用户id读取文档中的历史活跃度
 def get_actyh(id):
-    myclient=getclient()
-    mycol=myclient[DBname][COLname]
+    mycol=getclient()
     result=mycol.find_one({"uid":id})
     return result
 
 def updata_actyh(id,nowacty):
-    myclient=getclient()
-    mycol=myclient[DBname][COLname]
+    mycol=getclient()
     oldresult=get_actyh(id)["actyh"]
    #print("old:%s"%oldresult)
     oldresult.append(nowacty)
