@@ -21,6 +21,7 @@ from bin.globalNUM import *
 idlist=get_idlist()
 l=len(idlist)
 sums=1
+print(9)
 for uid in idlist:
     Me=UserActy(id=uid)
     Me.newsh()
