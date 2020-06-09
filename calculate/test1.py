@@ -21,4 +21,5 @@ import datetime
 today=datetime.datetime.today()
 today=today+datetime.timedelta(days=1)
 print(today.strftime("%Y-%m-%d"))
-print(sqlbyid_days("A0100001",datetime.datetime.strptime("2018-03-12")))
+print(sqlbyid_days("A0100001",datetime.datetime.strptime("2018-03-12","%Y-%m-%d"),today))
+print(80*1024)
