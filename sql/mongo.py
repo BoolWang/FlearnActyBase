@@ -29,3 +29,7 @@ def updata_actyh(id,nowacty):
     #print("new:%s"%newresult)
     mycol.update_one({"uid":id},{"$set":{"actyh":newresult}})
 
+def getDataById(uid):
+    client=pmg.MongoClient("mongodb://"+MONGOhost+":"+str(MONGOport)+"/")
+    result=get_actyh(uid)
+    return result["fday"],result["lday"],result["actyh"]

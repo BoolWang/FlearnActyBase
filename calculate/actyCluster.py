@@ -1,28 +1,10 @@
-from useracty.UserActy import *
-from sql.StudyH import select_all_id,sqlbyid
-from sql.mongo import get_actyh,getclient
+#对打标范围的一个科学划分
 from bin.json_io import get_idlist
 from calculate.ErgodicAdd import MiniUserActy
 import matplotlib.pyplot as plt
 from sklearn.cluster import k_means
 from sklearn.metrics import silhouette_score
-import sys
-from bin.globalNUM import *
-import random
-# #
-# # #由id盘点未曾计算过的用户活跃度,并对计算结果进行存储
-# # idlist=select_all_id()
-# # for uid in idlist:
-# #     Me=UserActy(id=uid)
-# #     Me.newsh()
-# #     Me.cutsh()
-# #     Me.get2mongo()
-# #     sys.stdout.write('\r' + "at %s"%uid)
-# #     sys.stdout.flush()
-# #
-# # print(len(idlist))
-# # #由id和盘点好的用户活跃度表进行按日更新
-# at WLT00001 (246471 OF 246473)
+
 idlist=get_idlist()
 SetMaxActy=[]
 def random_list(a,b,n):
@@ -62,3 +44,7 @@ plt.show()
 print(maxA,sumA)
 print(maxB,sumB)
 print(maxC,sumC)
+
+# 33.6242 648
+# 481.9515528000002 33
+# 110.07294350000004 319
