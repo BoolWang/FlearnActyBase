@@ -77,7 +77,7 @@ class MiniUserActy():
 
 
 
-
+idlist=[get_idlist(),get_idlist()]
 class Ergodic():
     # 系统遍历器,fady和lday用来指定遍历的时间范围,精确到月
     # 原则上时间范围的指定只是为了避免重复遍历，即时间范围对最终统计结果是没有影响的
@@ -103,11 +103,10 @@ class Ergodic():
     def getLeveData(self):
         return self.__levelData
 
-    def newDataAll(self,s,e):
-        idlist=get_idlist()
+    def newDataAll(self,s,e,k):
         # idlist=["F1027613"]
         global finishUsers
-        for uid in idlist[s:e]:
+        for uid in idlist[k][s:e]:
             nowUser=MiniUserActy(uid)
             fmonth,maxMonthActy=nowUser.apiForErgidic()
             i=0
@@ -150,8 +149,8 @@ A=Ergodic()
 B=Ergodic()
 C=Ergodic()
 # A.newDataAll(0,1)
-def calcuAll(AA,s,e):
-    AA.newDataAll(s,e)
+def calcuAll(AA,s,e,k):
+    AA.newDataAll(s,e,k)
 
 def printNow():
     for i in range(1000):
@@ -166,8 +165,8 @@ def printNow():
         sys.stdout.flush()
 
 
-thread1 = myThread1(calcuAll,A,0,120000)
-thread2=myThread1(calcuAll,B,120001,-1)
+thread1 = myThread1(calcuAll,A,0,120000,0)
+thread2=myThread1(calcuAll,B,120001,-1,1)
 # thread3=myThread1(calcuAll,C,166669,-1)
 thread0 = myThread1(printNow)
 thread1.start()
