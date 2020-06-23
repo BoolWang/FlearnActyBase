@@ -8,15 +8,12 @@ def list2json(lis,path):
         f.close()
 
 #从json文件中读取用户id列表
-def get_idlist(k):
+def get_idlist():
     with open(ROOTpath+'\\idlist.json') as f:
         userli=json.load(f)
         f.close()
-    userli1=list(filter(lambda x:x[0]==k,userli))
-    return userli1
+    return userli
 
-uc=get_idlist("C")
-print(uc)
 
 #更新用户id到json文件中去
 def updata_idlist(id):

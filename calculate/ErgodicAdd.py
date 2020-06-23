@@ -10,7 +10,12 @@ import datetime
 import calendar
 from bin.json_io import get_idlist,list2json
 from bin.tools import indexByActy
+import threading
+import time
+import sys
+import numpy as np
 
+finishUsers=0
 class MiniUserActy():
     # 从mongo数据库实例化用于遍历的简化版用户对象
     def __init__(self,uid):
@@ -47,9 +52,9 @@ class MiniUserActy():
 
     def CutArrByMonth(self,arr,fday,lday):
         if(len(arr)!=((lday-fday).days+1)):
-            print(arr[0])
-            print(len(arr[1:]),((lday-fday).days+1))
-            return
+            # print(self.__id)
+            # print(len(arr[1:]),((lday-fday).days+1))
+            return [MINActy]
         else:
             maxActy,monthMax,nday,nmonth=MINActy,[],fday,fday.month
             for i in range(len(arr)):
@@ -67,7 +72,7 @@ class MiniUserActy():
 
     def apiForErgidic(self):
         fdayStr=self.__fday.strftime("%Y-%m-%d")[:7]
-        return fdayStr,self.__MaxMonthActy
+        return fdayStr,self.__MaxMonthActy#,(self.__lday-self.__fday).days,self.__globalActy
 
 
 
@@ -95,23 +100,87 @@ class Ergodic():
             f.close()
         self.__lRunMonth=Obj.getAll()
 
-    def newDataAll(self,k):
-        idlist=get_idlist(k)
-        for uid in idlist[300:600]:
+    def getLeveData(self):
+        return self.__levelData
+
+    def newDataAll(self,s,e):
+        idlist=get_idlist()
+        # idlist=["F1027613"]
+        global finishUsers
+        for uid in idlist[s:e]:
             nowUser=MiniUserActy(uid)
             fmonth,maxMonthActy=nowUser.apiForErgidic()
             i=0
             while(i<len(self.__monthList)):
                 if(self.__monthList[i]==fmonth):
+                    # print(i,self.__monthList[i])
                     break
                 else:
                     i+=1
-            for maxActy in maxMonthActy:
-                self.__levelData[indexByActy(maxActy)][i]+=1
-                i+=1
-        print(self.__levelData)
-        list2json(self.__levelData,"levelData.json")
-        list2json(self.__monthList,"monthList.json")
+            if(i==len(self.__monthList)):
+                continue
+            else:
+                for maxActy in maxMonthActy:
+                    if i>=len(self.__levelData[indexByActy(maxActy)]):
+                        print(uid,i,len(self.__monthList),fmonth)
+                    else:
+                        self.__levelData[indexByActy(maxActy)][i]+=1
+                        i+=1
+            finishUsers+=1
+            # sys.stdout.write("\r"+"at %s"%uid)
+            # sys.stdout.flush()
+        # print(self.__levelData)
+        # list2json(self.__levelData,"levelData.json")
+        # list2json(self.__monthList,"monthList.json")
 
 
+#继承threading.Thread类
+class myThread1 (threading.Thread):
+    def __init__(self,funct,*arg):
+        threading.Thread.__init__(self)
+        self.funct=funct
+        self.arg=arg
+    def run(self):
+        # print(self.arg)
+        self.funct(*self.arg)
+
+# testU=MiniUserActy("G4945495")
+# print(testU.apiForErgidic())
+A=Ergodic()
+B=Ergodic()
+C=Ergodic()
+# A.newDataAll(0,1)
+def calcuAll(AA,s,e):
+    AA.newDataAll(s,e)
+
+def printNow():
+    for i in range(1000):
+        time.sleep(10)
+        finishData1=A.getLeveData()
+        finishData2=B.getLeveData()
+        # finishData3=C.getLeveData()
+        finishData=np.add(finishData1,finishData2)
+        # finishData=np.add(finishData,finishData3)
+        sys.stdout.write("\r"+"There is Finished %s users,with %s lv1,%s lv2,%s lv3,%s lv4"%(finishUsers,sum(finishData[0]),sum(finishData[1]),sum(finishData[2])
+                                                                        ,sum(finishData[3])))
+        sys.stdout.flush()
+
+
+thread1 = myThread1(calcuAll,A,0,120000)
+thread2=myThread1(calcuAll,B,120001,-1)
+# thread3=myThread1(calcuAll,C,166669,-1)
+thread0 = myThread1(printNow)
+thread1.start()
+thread2.start()
+# thread3.start()
+thread0.start()
+thread1.join()
+thread2.join()
+# thread3.join()
+thread0.join()
+finishData1=A.getLeveData()
+finishData2=B.getLeveData()
+finishData=np.add(finishData1,finishData2)
+finishData=list(finishData)
+list2json(finishData,"finishData.json")
 

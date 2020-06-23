@@ -1,6 +1,8 @@
-from calculate.ErgodicAdd import Ergodic
+# from calculate.ErgodicAdd import Ergodic
 
-def ergodicByK(k):
-    m=Ergodic()
-    m.newDataAll(k)
-    return m
+def funt(a,*args):
+    b=args
+    print(a,*b)
+    print(args==())
+
+funt(1)
