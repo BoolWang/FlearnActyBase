@@ -18,6 +18,9 @@ if(chose):
     SQLpwd='20200304#'
     SQLdb='targetdb'
     SQLtable="log_data_Course_see_2"
+    #活跃度等级划分
+    Lv1=30
+    Lv2=100
 
 #需要用到的全局静态变量定义，测试版
 else:
@@ -38,4 +41,3 @@ else:
     SQLpwd='csu3216300.'
     SQLdb='flearn'
     SQLtable="studyh"
-

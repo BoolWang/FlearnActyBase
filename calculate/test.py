@@ -12,6 +12,7 @@ import pandas as pd
 import time
 from sql.StudyH import getclient
 import time
+import calendar
 
 # cur1=getclient()
 # alllist="ACEFGHIJKLNPSTUVW"
@@ -26,18 +27,13 @@ import time
 # idlist=list(set(idlist))
 # stop2=time.clock()
 # print("spendtime1:%s Sec"%(stop2-stop1))
+from bin.json_io import get_idlist
+from sql.mongo import getDataById
+import sys
 
-class Test():
-    def __init__(self):
-        self.__a="a"
-        self.__b=self.tt()
+idlist=get_idlist()
+for uid in idlist:
+    getDataById(uid)
+    sys.stdout.write('\r' + "at %s"%uid)
+    sys.stdout.flush()
 
-    def tt(self):
-        self.__o="p"
-        return "ab"
-
-    def __repr__(self):
-        return "a:%s,b:%s,o:%s"%(self.__a,self.__b,self.__o)
-
-A=Test()
-print(A)

@@ -5,6 +5,11 @@
 #还是需要全部学员的idList
 from sql.mongo import getDataById
 from bin.globalNUM import *
+import pickle
+import datetime
+import calendar
+from bin.json_io import get_idlist,list2json
+from bin.tools import indexByActy
 
 class MiniUserActy():
     # 从mongo数据库实例化用于遍历的简化版用户对象
@@ -13,6 +18,7 @@ class MiniUserActy():
         self.__fday,self.__lday,self.__localActy=getDataById(uid)
         self.__maxActy=self.findMaxActy()
         self.__globalActy=self.uncut()
+        self.__MaxMonthActy=self.CutArrByMonth(self.__globalActy[1:],self.__fday,self.__lday)
 
     def findMaxActy(self):
         # 从localActy中找到历史最大活跃度
@@ -39,12 +45,73 @@ class MiniUserActy():
                     actysh.append(ai)
         return actysh
 
+    def CutArrByMonth(self,arr,fday,lday):
+        if(len(arr)!=((lday-fday).days+1)):
+            print(arr[0])
+            print(len(arr[1:]),((lday-fday).days+1))
+            return
+        else:
+            maxActy,monthMax,nday,nmonth=MINActy,[],fday,fday.month
+            for i in range(len(arr)):
+                if(nday.month==nmonth):
+                    maxActy=max(maxActy,arr[i])
+                else:
+                    monthMax.append(maxActy)
+                    maxActy=max(MINActy,arr[i])
+                    nmonth=nday.month
+                nday=nday+datetime.timedelta(days=1)
+        if(nday.day!=calendar.monthrange(nday.year,nday.month)):
+            monthMax.append(maxActy)
+        #print(monthMax)
+        return monthMax
+
+    def apiForErgidic(self):
+        fdayStr=self.__fday.strftime("%Y-%m-%d")[:7]
+        return fdayStr,self.__MaxMonthActy
 
 
 
-# class Ergodic():
-#     # 系统遍历器,fady和lday用来指定遍历的时间范围,精确到月
-#     # 原则上时间范围的指定只是为了避免重复遍历，即时间范围对最终统计结果是没有影响的
-#     def __init__(self,fady,lday):
+
+
+class Ergodic():
+    # 系统遍历器,fady和lday用来指定遍历的时间范围,精确到月
+    # 原则上时间范围的指定只是为了避免重复遍历，即时间范围对最终统计结果是没有影响的
+    def __init__(self):
+        self.__lRunMonth=max(0,1)
+        self.__levelData=[[],[],[],[]]
+        ad=datetime.datetime(2017,1,1)
+        lday=ad
+        monthList=[]
+        while(lday<datetime.datetime(2020,7,1)):
+            monthList.append(lday.strftime('%Y-%m-%d')[:7])
+            lday=lday+datetime.timedelta(calendar.monthrange(lday.year,lday.month)[1])
+            for i in range(4):
+                self.__levelData[i].append(0)
+        self.__monthList=monthList
+
+    def load_data(self):
+        with open(ROOTpath+"\\ergoDic.pickle") as f:
+            Obj=pickle.load(f)
+            f.close()
+        self.__lRunMonth=Obj.getAll()
+
+    def newDataAll(self,k):
+        idlist=get_idlist(k)
+        for uid in idlist[300:600]:
+            nowUser=MiniUserActy(uid)
+            fmonth,maxMonthActy=nowUser.apiForErgidic()
+            i=0
+            while(i<len(self.__monthList)):
+                if(self.__monthList[i]==fmonth):
+                    break
+                else:
+                    i+=1
+            for maxActy in maxMonthActy:
+                self.__levelData[indexByActy(maxActy)][i]+=1
+                i+=1
+        print(self.__levelData)
+        list2json(self.__levelData,"levelData.json")
+        list2json(self.__monthList,"monthList.json")
+
 
 
